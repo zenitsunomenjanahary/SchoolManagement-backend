@@ -2,7 +2,10 @@ import Note from "../models/Note.js"
 
 export const getAllNotes = async(req,res,next)=>{
     try {
-        const notes = await Note.find();
+        const notes = await Note.find()
+                                    .populate("classe")
+                                    .populate("course")
+                                    .populate("student");
         return res.status(200).json(notes);
     } catch (error) {
         return res.status(400).json("unable to find notes")
@@ -22,11 +25,11 @@ export const getNoteById = async(req,res,next)=>{
 export const addNote = async(req,res,next)=>{
     const { student, course, note,classe } = req.body;
     try {
-        const note = new Note({ student, course, note, classe });
-        await note.save();
-        return res.status(201).json(note)
+        const newNote = new Note({ student, course, note, classe });
+        await newNote.save();
+        return res.status(201).json(newNote)
     } catch (error) {
-        return res.status(400).json("unable to add note")
+        return res.status(400).json("unable to add note: " + error)
     }
 }
 

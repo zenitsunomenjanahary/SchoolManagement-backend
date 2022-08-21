@@ -1,3 +1,4 @@
+import Note from "../models/Note.js";
 import Student from "../models/Student.js"
 
 export const getAllStudents = async(req,res,next)=>{
@@ -12,7 +13,7 @@ export const getAllStudents = async(req,res,next)=>{
 export const getStudentById = async(req,res,next)=>{
     const id = req.params.id
     try {
-        const student = await Student.findById(id);
+        const student = await Student.findById(id).populate("classe");
         return res.status(200).json(student);
     } catch (error) {
         return res.status(404).json(`Unable to find student for this id`);
@@ -52,5 +53,15 @@ export const editStudent = async(req,res,next)=> {
         return res.status(202).json(student);
     } catch (error) {
         return res.status(400).json("Unable to update student for this id")
+    }
+}
+
+export const getStudentNotes = async(req,res,next)=> {
+    const id = req.params.id;
+    try {
+        const notes = await Note.find({student:id}).populate("course");
+        return res.status(200).json(notes);
+    } catch (error) {
+        return res.status(400).json("Unable to get notes for this student id");
     }
 }
